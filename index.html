@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A blazingly fast blazing fast thesaurus.">
+    <title>Blazing Fast Thesaurus</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+      integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
+    <style>
+      body {
+        background-color: #BC243C;
+      }
+
+      .blazing-fast {
+        color: #EFC050;
+        font-size: 5em;
+        font-family: "Candara";
+        font-weight: bold;
+      }
+
+      .button-warning {
+        background: #EFC050;
+        font-weight: bold;
+        color: #BC243C;
+        margin-top: 1em;
+      }
+
+      .center {
+        position: absolute;
+        left: 50%;
+        top: 33%;
+        transform: translate(-50%, -66%);
+        text-align: center;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <body>
+      <div class="center">
+        <div class="blazing-fast">
+          Blazing Fast
+        </div>
+        <button class="button-warning pure-button">Synonymize</button>
+      </div>
+    </body>
+    <script>
+      'use strict';
+
+      const host = 'https://api.datamuse.com/words?';
+      const queries = {
+        synonyms: 'ml=',
+        rhymes: 'rel_rhy=',
+        similar: 'sp=blazing'
+      };
+      const txt = document.querySelector('.blazing-fast');
+      const get = async (word, type) => await (await fetch(host + queries[type] + word, { method: 'get' })).json();
+      const rand = (arr) => arr[~~(arr.length * Math.random())];
+
+      const words = { blazing: [], fast: [] };
+
+      async function main() {
+        const blazingSynonyms = await get('blazing', 'synonyms');
+        const blazingRhymes = await get('blazing', 'rhymes');
+        const blazingSimilar = await get('blazing', 'similar');
+        words.blazing = [...blazingSynonyms, ...blazingRhymes, ...blazingSimilar, { word: 'blazing' }]
+          .map(({ word }) => word.endsWith('ly') ? ({ word }) : ({ word: word + 'ly' }))
+          .filter(({ word }) => !/slow/i.test(word))
+          .map(({ word }) => ({ word: word.replace(/[^a-z]/i, '') }));
+        const fastSynonyms = await get('fast', 'synonyms');
+        const fastRhymes = await get('fast', 'rhymes');
+        const fastSimilar = await get('fast', 'similar');
+        words.fast = [...fastSynonyms, ...fastRhymes, ...fastSimilar, { word: 'fast' }]
+          .map(({ word }) => ({ word: word.replace(/[^a-z]/i, '') }))
+          .filter(({ word }) => !/slow/i.test(word));
+
+        document.querySelector('button').onclick = async function () {
+          const { blazing, fast } = words;
+          const { word: a } = rand(blazing)
+          const { word: b } = rand(fast);
+          const text = [a, b].map(c => c.replace(/./, l => l.toUpperCase())).join(' ');
+          txt.textContent = text;
+        }
+      }
+
+      main();
+    </script>
+
+</html>
