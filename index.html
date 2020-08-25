@@ -54,7 +54,7 @@
       const queries = {
         synonyms: 'ml=',
         rhymes: 'rel_rhy=',
-        similar: 'sp=blazing'
+        similar: 'sp='
       };
       const txt = document.querySelector('.blazing-fast');
       const get = async (word, type) => await (await fetch(host + queries[type] + word, { method: 'get' })).json();
