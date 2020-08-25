@@ -68,13 +68,16 @@
         const blazingSynonyms = await get('blazing', 'synonyms');
         const blazingRhymes = await get('blazing', 'rhymes');
         const blazingSimilar = await get('blazing', 'similar');
+
         words.blazing = [...blazingSynonyms, ...blazingRhymes, ...blazingSimilar, { word: 'blazing' }]
           .map(({ word }) => word.endsWith('ly') ? ({ word }) : ({ word: word + 'ly' }))
           .filter(({ word }) => !/slow/i.test(word))
           .map(({ word }) => ({ word: word.replace(/[^a-z]/i, '') }));
+
         const fastSynonyms = await get('fast', 'synonyms');
         const fastRhymes = await get('fast', 'rhymes');
         const fastSimilar = await get('fast', 'similar');
+        
         words.fast = [...fastSynonyms, ...fastRhymes, ...fastSimilar, { word: 'fast' }]
           .map(({ word }) => ({ word: word.replace(/[^a-z]/i, '') }))
           .filter(({ word }) => !/slow/i.test(word));
