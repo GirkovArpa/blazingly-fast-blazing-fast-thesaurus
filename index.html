@@ -61,6 +61,10 @@
       const rand = (arr) => arr[~~(arr.length * Math.random())];
 
       const words = { blazing: [], fast: [] };
+      const emojis = ["1f680", "2668", "1f336", "1f955", "1f360", "1f6f4", "2708", "1f6eb", "1f6ec", "1f6e9", "1f3ce", "1f3cd", "1f320", "1f30c", "1f3a2", "1f985", "26a1", "2604", "1f4a5", "1f525", "1f32a", "1f4ab"];
+
+      const encryptEmoji = (emoji) => emoji.codePointAt(0).toString(16);
+      const decryptEmoji = (hex) => String.fromCodePoint('0x' + hex);
 
       async function main() {
         const blazingSynonyms = await get('blazing', 'synonyms');
@@ -84,8 +88,9 @@
           const { blazing, fast } = words;
           const { word: a } = rand(blazing)
           const { word: b } = rand(fast);
+          const emoji = decryptEmoji(rand(emojis));
           const text = [a, b].map(c => c.replace(/./, l => l.toUpperCase())).join(' ');
-          txt.textContent = text;
+          txt.textContent = text + ' ' + emoji;
         }
       }
 
